@@ -31,14 +31,17 @@ function decode(s: string): string {
 }
 
 export function parsePage(html: string): ParsedPage {
+  // 属性は「開いた引用符と同じ文字」で閉じる。`[^"']*` にすると
+  // 「ideaman's Today」のようなアポストロフィで値が切れ、長さを誤る
   const one = (re: RegExp): string | undefined => {
     const m = html.match(re)
-    return m?.[1] ? decode(clean(m[1])) : undefined
+    const v = m?.[2] ?? m?.[1]
+    return v ? decode(clean(v)) : undefined
   }
 
   const og: Record<string, string> = {}
-  for (const m of html.matchAll(/<meta[^>]+property=["']og:([a-z:_]+)["'][^>]+content=["']([^"']*)["']/gi)) {
-    if (m[1] && m[2]) og[m[1]] = clean(m[2])
+  for (const m of html.matchAll(/<meta[^>]+property=["']og:([a-z:_]+)["'][^>]+content=(["'])((?:(?!\2).)*)\2/gi)) {
+    if (m[1] && m[3]) og[m[1]] = clean(m[3])
   }
 
   const headings = [...html.matchAll(/<h([1-6])[\s>]/gi)].map((m) => Number(m[1]))
@@ -57,9 +60,9 @@ export function parsePage(html: string): ParsedPage {
 
   return {
     title: one(/<title[^>]*>([\s\S]*?)<\/title>/i),
-    description: one(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i),
-    canonical: one(/<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']*)["']/i),
-    lang: one(/<html[^>]+lang=["']([^"']*)["']/i),
+    description: one(/<meta[^>]+name=["']description["'][^>]+content=(["'])((?:(?!\1).)*)\1/i),
+    canonical: one(/<link[^>]+rel=["']canonical["'][^>]+href=(["'])((?:(?!\1).)*)\1/i),
+    lang: one(/<html[^>]+lang=(["'])((?:(?!\1).)*)\1/i),
     og,
     h1Count: headings.filter((l) => l === 1).length,
     headingLevels: headings,

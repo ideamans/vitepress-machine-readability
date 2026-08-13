@@ -24,25 +24,44 @@ export function excerptOf(filePath: string, maxChars: number): string | undefine
     .replace(/^:::[\s\S]*?^:::/gm, '') // VitePress のコンテナ
     .replace(/<[^>]+>/g, '') // 生のHTML・Vueコンポーネント
 
+  const prose: string[] = []
   for (const block of body.split(/\n{2,}/)) {
-    const line = block.trim()
-    if (!line) continue
-    if (line.startsWith('#')) continue // 見出し
-    if (line.startsWith('|') || line.startsWith('>')) continue // 表・引用
-    if (/^[-*+]\s|^\d+\.\s/.test(line)) continue // 箇条書き
-    if (/^!\[/.test(line)) continue // 画像だけの段落
+    for (const line of block.split('\n')) {
+      const t = line.trim()
+      if (!t) continue
+      if (/^[#|>!]/.test(t)) continue // 見出し・表・引用・画像
+      if (/^[-*+]\s|^\d+\.\s/.test(t)) continue // 箇条書き
 
-    const text = line
-      .replace(/!\[[^\]]*\]\([^)]*\)/g, '') // 画像
-      .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // リンクは文字だけ残す
-      .replace(/[*_`]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
+      const text = t
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+        .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // リンクは文字だけ残す
+        .replace(/https?:\/\/\S+/g, '') // 裸のURLは入れない
+        .replace(/[*_`]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
 
-    if ([...text].length < 20) continue
-    return trimTo(text, maxChars)
+      if (text.length >= 6) prose.push(text)
+    }
+    if (prose.join('').length > 400) break
   }
-  return undefined
+  if (!prose.length) return undefined
+
+  // **文の切れ目で終わらせる。** 途中で切って「…」を付けると、
+  // 元の（機械で切られた）抜粋と同じものができてしまう。
+  const sentences = prose.join(' ').split(/(?<=[。！？])/).filter((x) => x.trim())
+  let out = ''
+  for (const raw of sentences) {
+    const sent = raw.trim()
+    // 見出しが1文として紛れ込むことがある（句点が無く短い）
+    if (!out && sent.length < 25 && !/[。！？]$/.test(sent)) continue
+    if (out && out.length + sent.length > maxChars) break
+    out += sent
+    if (out.length >= 60) break
+  }
+
+  out = out.trim()
+  if (out.length < 20) return undefined
+  return out.length > maxChars ? trimTo(out, maxChars) : out
 }
 
 /** 句点で切れるならそこで切る。無理なら文字数で切って「…」を付ける */
