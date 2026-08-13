@@ -1,0 +1,5 @@
+node_modules/
+dist/
+*.log
+tests/fixture/.vitepress/dist/
+tests/fixture/.vitepress/cache/

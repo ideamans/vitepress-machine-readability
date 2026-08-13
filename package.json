@@ -1,0 +1,43 @@
+{
+  "name": "vitepress-machine-readability",
+  "version": "0.1.0",
+  "description": "Make a VitePress site readable by search engines and AI: canonical, OGP, JSON-LD, sitemap lastmod, robots.txt, feed, Markdown sources — plus a build-time lint that fails before you deploy.",
+  "keywords": ["vitepress", "seo", "llm", "ai", "sitemap", "robots", "json-ld", "ogp", "feed", "llms-txt"],
+  "license": "MIT",
+  "author": "miyanaga <miyanaga@ideamans.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ideamans/vitepress-machine-readability.git"
+  },
+  "homepage": "https://github.com/ideamans/vitepress-machine-readability#readme",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "bun run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "prepublishOnly": "bun run build && bun run test"
+  },
+  "peerDependencies": {
+    "vitepress": "^1.6.0 || ^2.0.0-alpha.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.0",
+    "vitepress": "^2.0.0-alpha.19"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

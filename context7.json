@@ -1,0 +1,19 @@
+{
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "vitepress-machine-readability",
+  "description": "VitePress サイトを検索エンジンとAIの両方から読める状態にする。canonical・OGP・JSON-LD・sitemap の lastmod・robots.txt・フィード・Markdown 原本を出し、ビルド時に出力を検査する。",
+  "folders": ["src"],
+  "excludeFolders": ["node_modules", "dist", "tests/fixture"],
+  "rules": [
+    "設定は defineConfig(withMachineReadability(config, options)) の形で包む。VitePress にプラグイン機構は無く、transformHead も buildEnd も設定に1つしか置けないため、素朴に足すと既存の実装を上書きして壊す",
+    "hostname は必須。それ以外は既定値で動く",
+    "frontmatter のキー名がサイトごとに違う場合は map で寄せる（例 map: { description: ['excerpt'] }）。og だけでなく meta name=description も入れ直されるので、サイト共通の説明文が全ページに出る問題が同時に直る",
+    "sitemap の lastmod にビルド時刻を使ってはいけない。毎回すべてが更新扱いになり lastmod の意味が消える。frontmatter → git → ファイルの更新時刻の順に探す",
+    "既存サイトに入れるときは lint: 'warn' から始める。最初から 'error' にすると必ずビルドが落ちる",
+    "robots.txt は Google-Extended など User-agent: * では効かないクローラを明示する",
+    "フィードのパスを変えるときは alias に旧パスを書いて両方配る。購読者のリーダーが黙って止まるのを防ぐ",
+    "このパッケージは本文を生成も書き換えもしない。説明文が短いことは指摘するが、機械生成の要約で上書きはしない",
+    "ソースの実ファイルは pageData.filePath から取る。relativePath は rewrites 適用後のパスになることがあり、組み立てると存在しないファイルを指す",
+    "JSON-LD は同じ役割の型（Article と BlogPosting など）を1枠と数える。すでに出ている型があれば足さない"
+  ]
+}
