@@ -217,3 +217,8 @@ VitePress `^1.6.0` と `^2.0.0-alpha.0`。MPA（`mpa: true`）でも動く。
 ## License
 
 MIT © ideaman's Inc.
+
+## リリース（メンテナー向け）
+
+package.json の version を上げてコミットし、`git tag vX.Y.Z && git push origin vX.Y.Z`。
+GitHub Actions が npm の Trusted Publishing（OIDC）で公開する（トークンは使わない）。
