@@ -207,6 +207,7 @@ MPA、自前の `transformHead`・`buildEnd` あり）で試した。そこで�
 ## 対応バージョン
 
 VitePress `^1.6.0` と `^2.0.0-alpha.0`。MPA（`mpa: true`）でも動く。
+このリポジトリの単体テストと結合（`tests/fixture`）は VitePress 2.0.0-alpha.21（Vite 8）で回している。
 
 ## しないこと
 

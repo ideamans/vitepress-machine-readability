@@ -1,6 +1,6 @@
 {
   "name": "vitepress-machine-readability",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Make a VitePress site readable by search engines and AI: canonical, OGP, JSON-LD, sitemap lastmod, robots.txt, feed, Markdown sources — plus a build-time lint that fails before you deploy.",
   "keywords": [
     "vitepress",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "@types/bun": "latest",
     "typescript": "^5.7.0",
-    "vitepress": "^2.0.0-alpha.19"
+    "vitepress": "^2.0.0-alpha.21"
   },
   "engines": {
     "node": ">=18"
